@@ -187,13 +187,7 @@ int main()
     a.insert(9,4);
     a.insert(1,4);
 
-    a.preorder();
-    cout<<endl;
-    a.inorder();
-    cout<<endl;
-    a.postorder();
-    cout<<endl;
-    a.leverorder();
+  
 
 
     return 0;
