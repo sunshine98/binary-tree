@@ -1,5 +1,6 @@
 #include <iostream>
 #include<queue>
+#include <assert.h>
 using namespace std;
 template <typename Key,typename Value>
 class BST{//构建二叉搜索树类
@@ -104,6 +105,48 @@ private:
         }
     }
 
+    //删除rootnode为根的二叉树的最小值，并且把删除后的树的地址返回
+    node*removemin(node*rootnode){
+        if(rootnode->left==NULL){//遍历到了树中最左边的节点，也就是该树中最小的节点
+            node*rightroot=rootnode->right;//把要删除的节点的右子树根节点的地址保存好
+            delete rootnode;//需要先记录右子树地址在删除节点，否则先删除节点则丢失了右子树根节点的地址
+            count--;
+            return rightroot;//把右子树的根地址返回到上一层以供连接使用
+        }
+        rootnode->left=removemin(rootnode->left);//连接记录好的右子树的根地址，重组为父节点的左子树
+        return rootnode;
+    }
+
+     // 删除以rootnode为根的二叉树的最大节点，并把新树的根节点返回
+
+    node*removemax(node*rootnode){
+        if(rootnode->right==NULL){//遍历到了树中最大节点的位置
+            node*leftnode=rootnode->left;//保存住被删除节点左子树的根节点地址
+            delete rootnode;//需要先记录左子树地址在删除节点，否则先删除节点则丢失了左子树根节点的地址
+            count--;
+            return leftnode;//返回上一级做连接使用
+        }
+        rootnode->right=removemax(rootnode->right);//连接被脱离的子树
+        return rootnode;//返回当前节点的地址
+    }
+    // 返回以node为根的二分搜索树的最小键值所在的节点
+    node* minimum(node* node){
+        if( node->left == NULL )
+            return node;
+
+        return minimum(node->left);
+    }
+
+    // 返回以node为根的二分搜索树的最大键值所在的节点
+    node* maximum(node* node){
+        if( node->right == NULL )
+            return node;
+
+        return maximum(node->right);
+    }
+
+
+
 
 
 public:
@@ -173,6 +216,29 @@ public:
     void deletetree(){
         deletetree(root);
     }
+
+    void removemin(){
+        if(root!=NULL)
+        root=removemin(root);//此处切记，一定要把新的root值重新赋值给root，否则若树根被删除的话，将会引发错误
+    }
+
+    // 寻找二分搜索树的最小的键值
+    Key minimum(){
+        assert( count != 0 );
+        node* minNode = minimum( root );
+        return minNode->key;
+    }
+
+    // 寻找二分搜索树的最大的键值
+    Key maximum(){
+        assert( count != 0 );
+        node* maxNode = maximum(root);
+        return maxNode->key;
+    }
+    //删除树中的最大节点
+    void removemax(){
+        root=removemax(root);
+    }
 };
 
 
@@ -180,12 +246,21 @@ public:
 int main()
 {
     BST<int,int> a=BST<int,int>();
-    cout<<a.size()<<endl;
-    if(a.isempty()) cout<<"the tree is empty"<<endl;
+
     a.insert(3,4);
-    a.insert(2,4);
-    a.insert(9,4);
     a.insert(1,4);
+    a.insert(5,4);
+    a.insert(2,4);
+    a.leverorder();
+    a.removemin();
+    cout<<endl;
+    cout<<"delete the min:"<<endl;
+    a.leverorder();
+    cout<<endl;
+    a.removemax();
+    cout<<"delete the max:"<<endl;
+    a.leverorder();
+
 
   
 
