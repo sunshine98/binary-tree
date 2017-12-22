@@ -18,6 +18,13 @@ private:
             this->right= nullptr;
         }
 
+        node(node*Node){//构建节点拷贝函数
+            this->left=Node->left;
+            this->right=Node->right;
+            this->key=Node->key;
+            this->value=Node->value;
+        }
+
     };
     node*root;//root指向二叉树的根节点
     int count;//计数二叉树中的节点数
@@ -124,17 +131,17 @@ private:
             node*leftnode=rootnode->left;//保存住被删除节点左子树的根节点地址
             delete rootnode;//需要先记录左子树地址在删除节点，否则先删除节点则丢失了左子树根节点的地址
             count--;
-            return leftnode;//返回上一级做连接使用
+            return   leftnode;//返回上一级做连接使用
         }
         rootnode->right=removemax(rootnode->right);//连接被脱离的子树
         return rootnode;//返回当前节点的地址
     }
     // 返回以node为根的二分搜索树的最小键值所在的节点
-    node* minimum(node* node){
+    node* minmum(node* node){
         if( node->left == NULL )
             return node;
 
-        return minimum(node->left);
+        return minmum(node->left);
     }
 
     // 返回以node为根的二分搜索树的最大键值所在的节点
@@ -143,6 +150,42 @@ private:
             return node;
 
         return maximum(node->right);
+    }
+
+
+    /*
+ * 删除以node为根的二叉树中的Key为key的节点
+ * 并且返回新二叉树的根地址
+ */
+    node* remove(node*Node,Key key){
+        if(Node==NULL){//如果树为空的话
+            return NULL;
+        }
+        else if(Node->key==key){//此时找到了需要被删除的节点
+            if(Node->left==NULL){//待删除节点的左子树为空的话
+                node*rightnode=Node->right;
+                delete Node;
+                count--;
+                return rightnode;
+            }
+            else if(Node->right==NULL){//此时待删除节点的右子树为空的话
+                node*leftnode=Node->left;
+                delete Node;
+                count--;
+                return leftnode;
+            }
+            else{//此时待删除节点的左右子树均不为空的话
+                //替换节点可以是该节点右子树中的最小值或者左子树的最大值，这里我们选右子树中的最小值作为替换
+                node*replacenode=new node(minmum(Node->right)) ;//复制待删除节点右子树的最小节点作为替换节点
+                count++;//增加计数器
+                replacenode->right=removemin(Node->right);//删除待删节点的右子树的最小值并把新树的根地址再重新赋值给替代
+                //节点的右子树
+                replacenode->left=Node->left;//替代节点的左子树就是原来节点的左子树
+                delete Node;//替代节点的左右子树都已经更新完毕了，可以删除了
+                count--;//更新计数器
+                return replacenode;//返回替代节点的地址即新树的根节点地址给上一层连接用
+            }
+        }
     }
 
 
@@ -223,9 +266,9 @@ public:
     }
 
     // 寻找二分搜索树的最小的键值
-    Key minimum(){
+    Key minmum(){
         assert( count != 0 );
-        node* minNode = minimum( root );
+        node* minNode = minmum( root );
         return minNode->key;
     }
 
@@ -240,7 +283,11 @@ public:
         root=removemax(root);
     }
 
-  
+    void remove(Key key){
+        root=remove(root,key);
+    }
+
+
 };
 
 
@@ -262,6 +309,11 @@ int main()
     a.removemax();
     cout<<"delete the max:"<<endl;
     a.leverorder();
+    cout<<endl<<"delete the 3"<<endl;
+    a.remove(3);
+    a.leverorder();
+
+
 
 
   
