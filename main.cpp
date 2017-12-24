@@ -33,12 +33,13 @@ private:
         //
         if(root== nullptr){//如果查找的根地址为空
             count++;//插入新节点
-            return new node(key ,value);
+            return new node(key ,value);//构造一个新节点，并返回
         }
         if(root->key==key){//覆盖节点
             root->value=value;
         }
         else key < root->key ? (root->left=insert(root->left, key, value)) : (root->right=insert(root->right, key, value));
+        //进行节点连接操作
         return root;//返回根地址
     }
     /*
@@ -159,20 +160,21 @@ private:
  */
     node* remove(node*Node,Key key){
         if(Node==NULL){//如果树为空的话
-            return NULL;
+            return NULL;//返回空值
         }
         else if(Node->key==key){//此时找到了需要被删除的节点
-            if(Node->left==NULL){//待删除节点的左子树为空的话
-                node*rightnode=Node->right;
-                delete Node;
-                count--;
-                return rightnode;
+
+            if(Node->left==NULL){//待删除节点的左子树为空的话,右子树为空或者不为空都不影响
+                node*rightnode=Node->right;//把右子树的根地址保存下来
+                delete Node;//节点此时可以被删除了
+                count--;//更新计数器
+                return rightnode;//右子树为空的话，返回NULL，不为空的话，返回右子树的根节点
             }
-            else if(Node->right==NULL){//此时待删除节点的右子树为空的话
-                node*leftnode=Node->left;
-                delete Node;
-                count--;
-                return leftnode;
+            else if(Node->right==NULL){//此时待删除节点的右子树为空的话,左子树为空或者不为空都不影响
+                node*leftnode=Node->left;//记录左子树的根地址，可能为空也可能为一个值，但不影响
+                delete Node;//此时可以删除节点
+                count--;//更新计数器
+                return leftnode;//左子树为空的话，返回NULL，不为空的话，返回左子树的根节点
             }
             else{//此时待删除节点的左右子树均不为空的话
                 //替换节点可以是该节点右子树中的最小值或者左子树的最大值，这里我们选右子树中的最小值作为替换
@@ -198,7 +200,7 @@ public:
         count=0;
     }
 
-    ~BST(){
+    ~BST(){//利用后序遍历先删除孩子节点再删除根节点来删除一棵二叉树
         deletetree();
     }
     int size(){//返回节点数量
@@ -237,19 +239,19 @@ public:
     }
 
     void leverorder(){
-        queue<node*> duilie;
+        queue<node*> duilie;//构造一个存放node*类型的队列
         if(root!=NULL){//必须存在二叉树才能够进行层序遍历
-            duilie.push(root);
+            duilie.push(root);//先把根节点入队作为开始
             while (!duilie.empty()){
-                    node*node=duilie.front();
+                    node*node=duilie.front();//取出队列的首元素进行访问操作
                     cout<<node->key<<' ';
-                    if(node->left!=NULL){
+                    if(node->left!=NULL){//被访问的节点有左孩子，也一起让其加入队列中
                         duilie.push(node->left);
                     }
-                    if(node->right!=NULL){
+                    if(node->right!=NULL){//被访问的节点有右孩子，也一起让其加入队列中
                         duilie.push(node->right);
                     }
-                    duilie.pop();
+                    duilie.pop();//队列首元素被访问完毕，其所有的孩子节点也入队完毕，可以出队
 
 
             }
